@@ -8,15 +8,10 @@ import { PageHeader } from '@/components/shared/layout/page-header'
 import { StatsCard } from '@/components/shared/data-display/stats-card'
 import { EmptyState } from '@/components/shared/feedback/empty-state'
 import { ConfirmDialog } from '@/components/shared/forms/confirm-dialog'
+import { FormDialog } from '@/components/shared/forms/form-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import {
   Table,
   TableBody,
@@ -27,6 +22,7 @@ import {
 } from '@/components/ui/table'
 import { FinanceEntryForm } from '@/features/finance/components/finance-entry-form'
 import type { FinanceEntryInput } from '@/lib/validations/finance'
+import { getErrorMessage } from '@/utils/error-message'
 import {
   useCreateFinanceEntry,
   useDeleteFinanceEntry,
@@ -67,7 +63,7 @@ export function FinancePage() {
       setDialogOpen(false)
       setEditing(null)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Save failed')
+      toast.error(getErrorMessage(err, 'Save failed'))
     }
   }
 
@@ -78,7 +74,7 @@ export function FinancePage() {
       toast.success('Entry deleted')
       setDeleteId(null)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Delete failed')
+      toast.error(getErrorMessage(err, 'Delete failed'))
     }
   }
 
@@ -96,14 +92,14 @@ export function FinancePage() {
         </Button>
       </PageHeader>
 
-      <div className="flex flex-wrap items-end gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:items-end sm:gap-4">
         <div className="space-y-1.5">
           <Label htmlFor="from">From</Label>
-          <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
+          <Input className="w-full" id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="to">To</Label>
-          <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
+          <Input className="w-full" id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
       </div>
 
@@ -119,7 +115,7 @@ export function FinancePage() {
         <EmptyState icon={Wallet} title="No entries in this range" description="Add your first finance entry." />
       ) : (
         <div className="bg-card overflow-x-auto rounded-xl border">
-          <Table>
+          <Table className="min-w-[820px]">
             <TableHeader>
               <TableRow>
                 <TableHead>S.No</TableHead>
@@ -168,22 +164,23 @@ export function FinancePage() {
         </div>
       )}
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{editing ? 'Edit entry' : 'Add finance entry'}</DialogTitle>
-          </DialogHeader>
-          <FinanceEntryForm
-            entry={editing ?? undefined}
-            onSubmit={handleSubmit}
-            onCancel={() => {
-              setDialogOpen(false)
-              setEditing(null)
-            }}
-            loading={createMutation.isPending || updateMutation.isPending}
-          />
-        </DialogContent>
-      </Dialog>
+      <FormDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title={editing ? 'Edit entry' : 'Add finance entry'}
+        description="Record the customer, job details, expense, and income."
+        maxWidth="lg"
+      >
+        <FinanceEntryForm
+          entry={editing ?? undefined}
+          onSubmit={handleSubmit}
+          onCancel={() => {
+            setDialogOpen(false)
+            setEditing(null)
+          }}
+          loading={createMutation.isPending || updateMutation.isPending}
+        />
+      </FormDialog>
 
       <ConfirmDialog
         open={!!deleteId}

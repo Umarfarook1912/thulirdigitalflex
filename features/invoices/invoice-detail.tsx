@@ -73,7 +73,9 @@ export function InvoiceDetail({ id }: InvoiceDetailProps) {
         </PageHeader>
       </div>
 
-      <InvoicePrintView invoice={invoice} />
+      <div className="invoice-preview overflow-x-auto pb-2">
+        <InvoicePrintView invoice={invoice} />
+      </div>
 
       <InvoiceEditDialog invoiceId={id} open={editOpen} onOpenChange={setEditOpen} />
     </div>

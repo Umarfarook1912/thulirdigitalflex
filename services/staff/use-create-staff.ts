@@ -9,13 +9,17 @@ export function useCreateStaff() {
 
   return useMutation({
     mutationFn: async (input: CreateStaffInput) => {
+      // Not retried on purpose: a repeat POST could create a duplicate account.
       const res = await fetch('/api/admin/staff', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message ?? 'Failed to create staff')
+
+      const data = await res.json().catch(() => null)
+      if (!res.ok) {
+        throw new Error(data?.message ?? `Failed to create staff (${res.status})`)
+      }
       return data
     },
     onSuccess: () => {

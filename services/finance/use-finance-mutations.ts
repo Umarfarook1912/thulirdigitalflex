@@ -62,6 +62,7 @@ export function useUpdateFinanceEntry() {
   return useMutation({
     mutationFn: async ({ id, input }: { id: string; input: FinanceEntryInput }) => {
       const supabase = getSupabaseBrowserClient()
+
       const { error } = await supabase
         .from('finance_entries')
         .update({

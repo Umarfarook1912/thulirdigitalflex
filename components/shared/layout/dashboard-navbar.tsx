@@ -1,8 +1,9 @@
 'use client'
 
-import { LogOut } from 'lucide-react'
+import { LogOut, Menu } from 'lucide-react'
 import { ThemeToggle } from '@/components/shared/layout/theme-toggle'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAuth } from '@/hooks/use-auth'
+import { useUIStore } from '@/store/ui-store'
 
 function getInitials(name: string) {
   return name
@@ -26,10 +28,19 @@ function getInitials(name: string) {
 
 export function DashboardNavbar() {
   const { user, signOut } = useAuth()
+  const setSidebarMobileOpen = useUIStore((state) => state.setSidebarMobileOpen)
 
   return (
-    <header className="bg-background/80 no-print sticky top-0 z-40 flex h-14 items-center border-b px-4 backdrop-blur">
-      <p className="font-heading text-sm font-semibold md:hidden">Thulir Digital Flex</p>
+    <header className="bg-background/80 no-print sticky top-0 z-40 flex h-14 shrink-0 items-center border-b px-4 backdrop-blur">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="md:hidden"
+        onClick={() => setSidebarMobileOpen(true)}
+        aria-label="Open navigation"
+      >
+        <Menu className="size-5" />
+      </Button>
       <div className="flex-1" />
 
       <div className="flex items-center gap-2">

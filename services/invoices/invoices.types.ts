@@ -8,3 +8,9 @@ export type InvoiceItemInsert = Database['public']['Tables']['invoice_items']['I
 export type InvoiceWithItems = Invoice & {
   invoice_items: InvoiceItem[]
 }
+
+export interface InvoiceFilters {
+  search?: string
+  from?: string
+  to?: string
+}

@@ -38,7 +38,10 @@ export function FormDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn('max-h-[90vh] overflow-y-auto', maxWidthClasses[maxWidth])}
+        className={cn(
+          'max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] overflow-y-auto overscroll-contain p-4 sm:max-h-[90vh] sm:w-full',
+          maxWidthClasses[maxWidth]
+        )}
       >
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

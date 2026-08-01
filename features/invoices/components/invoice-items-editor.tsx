@@ -4,6 +4,7 @@ import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { InvoiceItemCard } from '@/features/invoices/components/invoice-item-card'
 import { calcLineAmount, type InvoiceInput } from '@/lib/validations/invoice'
 
 export function InvoiceItemsEditor() {
@@ -46,7 +47,21 @@ export function InvoiceItemsEditor() {
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border">
+      <div className="space-y-3 md:hidden">
+        {fields.map((field, index) => (
+          <InvoiceItemCard
+            key={field.id}
+            index={index}
+            amount={Number(items?.[index]?.amount) || 0}
+            itemCount={fields.length}
+            register={register}
+            onRecalculate={recalc}
+            onRemove={remove}
+          />
+        ))}
+      </div>
+
+      <div className="hidden overflow-x-auto rounded-lg border md:block">
         <table className="w-full min-w-[780px] text-sm">
           <thead className="bg-muted">
             <tr>

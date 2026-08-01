@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { FormFieldWrapper } from '@/components/shared/forms/form-field-wrapper'
 import { InvoiceItemsEditor } from '@/features/invoices/components/invoice-items-editor'
 import { invoiceSchema, type InvoiceInput } from '@/lib/validations/invoice'
+import { getErrorMessage } from '@/utils/error-message'
 import { useCreateInvoice, useUpdateInvoice, type InvoiceWithItems } from '@/services/invoices'
 
 interface InvoiceFormProps {
@@ -90,7 +91,7 @@ export function InvoiceForm({ invoice, nextInvoiceNo, onSuccess, onCancel }: Inv
       }
       onSuccess?.()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to save invoice')
+      toast.error(getErrorMessage(err, 'Failed to save invoice'))
     }
   }
 
@@ -126,13 +127,13 @@ export function InvoiceForm({ invoice, nextInvoiceNo, onSuccess, onCancel }: Inv
           </p>
         )}
 
-        <div className="flex gap-2">
-          <Button type="submit" disabled={isSubmitting}>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row">
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
             {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isEdit ? 'Update Invoice' : 'Create Invoice'}
           </Button>
           {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
               Cancel
             </Button>
           )}

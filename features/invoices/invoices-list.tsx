@@ -20,6 +20,9 @@ import {
 } from '@/components/ui/table'
 import { InvoiceForm } from '@/features/invoices/components/invoice-form'
 import { InvoiceEditDialog } from '@/features/invoices/components/invoice-edit-dialog'
+import { InvoiceFiltersBar } from '@/features/invoices/components/invoice-filters-bar'
+import { useDebounce } from '@/hooks/use-debounce'
+import { getErrorMessage } from '@/utils/error-message'
 import { ROUTES } from '@/lib/constants'
 import {
   useDeleteInvoice,
@@ -28,7 +31,17 @@ import {
 } from '@/services/invoices'
 
 export function InvoicesList() {
-  const { data: invoices = [], isLoading } = useGetInvoices()
+  const [search, setSearch] = useState('')
+  const [from, setFrom] = useState('')
+  const [to, setTo] = useState('')
+  const debouncedSearch = useDebounce(search)
+  const hasFilters = Boolean(search || from || to)
+
+  const { data: invoices = [], isLoading } = useGetInvoices({
+    search: debouncedSearch,
+    from: from || undefined,
+    to: to || undefined,
+  })
   const { data: nextInvoiceNo } = useGetNextInvoiceNo()
   const deleteMutation = useDeleteInvoice()
   const [addOpen, setAddOpen] = useState(false)
@@ -42,7 +55,7 @@ export function InvoicesList() {
       toast.success('Invoice deleted')
       setDeleteId(null)
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Delete failed')
+      toast.error(getErrorMessage(err, 'Delete failed'))
     }
   }
 
@@ -55,18 +68,48 @@ export function InvoicesList() {
         </Button>
       </PageHeader>
 
+      <InvoiceFiltersBar
+        search={search}
+        from={from}
+        to={to}
+        onSearchChange={setSearch}
+        onFromChange={setFrom}
+        onToChange={setTo}
+        onClear={() => {
+          setSearch('')
+          setFrom('')
+          setTo('')
+        }}
+        hasFilters={hasFilters}
+      />
+
       {isLoading ? (
         <p className="text-muted-foreground text-sm">Loading…</p>
       ) : invoices.length === 0 ? (
         <EmptyState
           icon={FileText}
-          title="No invoices yet"
-          description="Create your first invoice for a customer."
-          action={{ label: 'New Invoice', onClick: () => setAddOpen(true) }}
+          title={hasFilters ? 'No invoices match your filters' : 'No invoices yet'}
+          description={
+            hasFilters
+              ? 'Try a different search or date range.'
+              : 'Create your first invoice for a customer.'
+          }
+          action={
+            hasFilters
+              ? {
+                  label: 'Clear filters',
+                  onClick: () => {
+                    setSearch('')
+                    setFrom('')
+                    setTo('')
+                  },
+                }
+              : { label: 'New Invoice', onClick: () => setAddOpen(true) }
+          }
         />
       ) : (
-        <div className="bg-card overflow-hidden rounded-xl border">
-          <Table>
+        <div className="bg-card overflow-x-auto rounded-xl border">
+          <Table className="min-w-[640px]">
             <TableHeader>
               <TableRow>
                 <TableHead>No</TableHead>

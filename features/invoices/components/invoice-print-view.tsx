@@ -18,13 +18,13 @@ export function InvoicePrintView({ invoice }: InvoicePrintViewProps) {
   const dateLabel = format(parseISO(invoice.invoice_date), 'dd.MM.yyyy')
 
   return (
-    <article className="invoice-sheet border-border text-brand-dark mx-auto max-w-3xl overflow-hidden border bg-white shadow-sm print:shadow-none">
+    <article className="invoice-sheet border-border text-brand-dark mx-auto box-border h-[297mm] w-[210mm] min-w-[210mm] overflow-hidden border bg-white shadow-sm print:shadow-none">
       <div className="flex h-2">
         <div className="bg-primary w-1/3" />
         <div className="bg-brand-dark flex-1" />
       </div>
 
-      <div className="invoice-content flex min-h-[1086px] flex-col p-8 print:p-5">
+      <div className="invoice-content box-border flex h-[calc(297mm-8px)] flex-col p-8">
         <header className="flex items-start justify-between gap-8">
           <div className="flex min-w-0 items-center gap-5">
             <Image

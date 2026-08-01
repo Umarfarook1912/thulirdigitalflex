@@ -70,12 +70,12 @@ export function FinanceEntryForm({ entry, onSubmit, onCancel, loading }: Finance
           <Input type="number" step="0.01" {...register('income', { valueAsNumber: true })} />
         </FormFieldWrapper>
       </div>
-      <div className="flex gap-2">
-        <Button type="submit" disabled={isSubmitting || loading}>
+      <div className="flex flex-col-reverse gap-2 sm:flex-row">
+        <Button type="submit" disabled={isSubmitting || loading} className="w-full sm:w-auto">
           {(isSubmitting || loading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {entry ? 'Update' : 'Add entry'}
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
           Cancel
         </Button>
       </div>

@@ -6,6 +6,31 @@ import { QUERY_KEYS } from '@/lib/constants'
 import type { InvoiceInput } from '@/lib/validations/invoice'
 import { calcLineAmount } from '@/lib/validations/invoice'
 
+/** invoice_no is unique in the database, so block the clash with a clear message. */
+async function assertInvoiceNoAvailable(invoiceNo: number, excludeId?: string) {
+  const supabase = getSupabaseBrowserClient()
+  let query = supabase.from('invoices').select('id').eq('invoice_no', invoiceNo).limit(1)
+  if (excludeId) query = query.neq('id', excludeId)
+
+  const { data, error } = await query
+  if (error) throw error
+  if (data?.length) {
+    throw new Error(`Invoice number ${invoiceNo} is already used. Choose a different number.`)
+  }
+}
+
+function buildItems(input: InvoiceInput, invoiceId?: string) {
+  return input.items.map((item, index) => ({
+    sl_no: index + 1,
+    description: item.description,
+    quantity: item.quantity,
+    total_sqft: item.total_sqft || null,
+    rate_per_sqft: item.rate_per_sqft,
+    amount: calcLineAmount(item.total_sqft, item.rate_per_sqft, item.quantity),
+    ...(invoiceId ? { invoice_id: invoiceId } : {}),
+  }))
+}
+
 export function useCreateInvoice() {
   const queryClient = useQueryClient()
 
@@ -16,17 +41,9 @@ export function useCreateInvoice() {
         data: { user },
       } = await supabase.auth.getUser()
 
-      const items = input.items.map((item, index) => {
-        const amount = calcLineAmount(item.total_sqft, item.rate_per_sqft, item.quantity)
-        return {
-          sl_no: index + 1,
-          description: item.description,
-          quantity: item.quantity,
-          total_sqft: item.total_sqft || null,
-          rate_per_sqft: item.rate_per_sqft,
-          amount,
-        }
-      })
+      await assertInvoiceNoAvailable(input.invoice_no)
+
+      const items = buildItems(input)
       const netTotal = items.reduce((sum, i) => sum + i.amount, 0)
 
       const { data: invoice, error } = await supabase
@@ -44,10 +61,16 @@ export function useCreateInvoice() {
 
       if (error) throw error
 
-      const { error: itemsError } = await supabase.from('invoice_items').insert(
-        items.map((item) => ({ ...item, invoice_id: invoice.id }))
-      )
-      if (itemsError) throw itemsError
+      try {
+        const { error: itemsError } = await supabase
+          .from('invoice_items')
+          .insert(items.map((item) => ({ ...item, invoice_id: invoice.id })))
+        if (itemsError) throw itemsError
+      } catch (itemsError) {
+        // Don't leave an invoice with no products behind.
+        await supabase.from('invoices').delete().eq('id', invoice.id)
+        throw itemsError
+      }
 
       return invoice
     },
@@ -65,21 +88,19 @@ export function useUpdateInvoice() {
     mutationFn: async ({ id, input }: { id: string; input: InvoiceInput }) => {
       const supabase = getSupabaseBrowserClient()
 
-      const items = input.items.map((item, index) => {
-        const amount = calcLineAmount(item.total_sqft, item.rate_per_sqft, item.quantity)
-        return {
-          sl_no: index + 1,
-          description: item.description,
-          quantity: item.quantity,
-          total_sqft: item.total_sqft || null,
-          rate_per_sqft: item.rate_per_sqft,
-          amount,
-          invoice_id: id,
-        }
-      })
+      await assertInvoiceNoAvailable(input.invoice_no, id)
+
+      const items = buildItems(input, id)
       const netTotal = items.reduce((sum, i) => sum + i.amount, 0)
 
-      const { error } = await supabase
+      const { data: previousRows, error: previousError } = await supabase
+        .from('invoice_items')
+        .select('id')
+        .eq('invoice_id', id)
+      if (previousError) throw previousError
+      const previousItemIds = (previousRows ?? []).map((item) => item.id as string)
+
+      const { error: updateError } = await supabase
         .from('invoices')
         .update({
           invoice_no: input.invoice_no,
@@ -90,14 +111,19 @@ export function useUpdateInvoice() {
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)
+      if (updateError) throw updateError
 
-      if (error) throw error
+      // Insert replacements before removing the old rows so a failure can't wipe the products.
+      const { error: insertError } = await supabase.from('invoice_items').insert(items)
+      if (insertError) throw insertError
 
-      const { error: delError } = await supabase.from('invoice_items').delete().eq('invoice_id', id)
-      if (delError) throw delError
-
-      const { error: itemsError } = await supabase.from('invoice_items').insert(items)
-      if (itemsError) throw itemsError
+      if (previousItemIds.length) {
+        const { error: deleteError } = await supabase
+          .from('invoice_items')
+          .delete()
+          .in('id', previousItemIds)
+        if (deleteError) throw deleteError
+      }
 
       return id
     },

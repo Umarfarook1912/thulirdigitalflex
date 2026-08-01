@@ -92,13 +92,13 @@
 
   --radius: 0.75rem;
 
-  --sidebar: #160100;
-  --sidebar-foreground: #ffffff;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #160100;
   --sidebar-primary: #ffa202;
   --sidebar-primary-foreground: #160100;
-  --sidebar-accent: #2a1810;
-  --sidebar-accent-foreground: #ffa202;
-  --sidebar-border: #3a2820;
+  --sidebar-accent: #fff4e0;
+  --sidebar-accent-foreground: #160100;
+  --sidebar-border: #e8e4e2;
   --sidebar-ring: #ffa20266;
 }
 
@@ -235,6 +235,11 @@
     width: 210mm !important;
     height: 297mm !important;
     margin: 0 !important;
+  }
+  .invoice-preview {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
   }
   .invoice-sheet {
     box-sizing: border-box;

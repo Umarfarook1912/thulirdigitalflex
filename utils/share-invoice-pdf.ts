@@ -20,32 +20,33 @@ export async function createInvoicePdfFile(
   const sheet = document.querySelector('.invoice-sheet') as HTMLElement | null
   if (!sheet) throw new Error('Invoice preview not found')
 
+  await document.fonts.ready
   const canvas = await html2canvas(sheet, {
     scale: 2,
     useCORS: true,
     backgroundColor: 'white',
     logging: false,
+    width: sheet.offsetWidth,
+    height: sheet.offsetHeight,
+    windowWidth: Math.max(sheet.scrollWidth, 794),
+    windowHeight: Math.max(sheet.scrollHeight, 1123),
+    scrollX: 0,
+    scrollY: 0,
+    onclone: (_document, cloned) => {
+      cloned.style.width = '210mm'
+      cloned.style.minWidth = '210mm'
+      cloned.style.height = '297mm'
+      cloned.style.maxWidth = 'none'
+      cloned.style.transform = 'none'
+      cloned.style.margin = '0'
+    },
   })
 
   const imgData = canvas.toDataURL('image/png')
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const pageWidth = pdf.internal.pageSize.getWidth()
   const pageHeight = pdf.internal.pageSize.getHeight()
-  const margin = 8
-  const availableWidth = pageWidth - margin * 2
-  const availableHeight = pageHeight - margin * 2
-  const imageRatio = canvas.width / canvas.height
-  let renderWidth = availableWidth
-  let renderHeight = renderWidth / imageRatio
-
-  if (renderHeight > availableHeight) {
-    renderHeight = availableHeight
-    renderWidth = renderHeight * imageRatio
-  }
-
-  const x = (pageWidth - renderWidth) / 2
-  const y = (pageHeight - renderHeight) / 2
-  pdf.addImage(imgData, 'PNG', x, y, renderWidth, renderHeight)
+  pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight)
 
   const blob = pdf.output('blob')
   return new File([blob], buildInvoiceFileName(customerName, invoiceDate), {

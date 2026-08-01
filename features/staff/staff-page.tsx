@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format, parseISO } from 'date-fns'
 import { Loader2, Plus, Users } from 'lucide-react'
@@ -9,14 +9,9 @@ import { toast } from 'sonner'
 import { PageHeader } from '@/components/shared/layout/page-header'
 import { EmptyState } from '@/components/shared/feedback/empty-state'
 import { FormFieldWrapper } from '@/components/shared/forms/form-field-wrapper'
+import { FormDialog } from '@/components/shared/forms/form-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import {
   Select,
   SelectContent,
@@ -34,6 +29,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { createStaffSchema, type CreateStaffInput } from '@/lib/validations/auth'
+import { getErrorMessage } from '@/utils/error-message'
 import { useCreateStaff, useGetStaff } from '@/services/staff'
 
 export function StaffPage() {
@@ -45,7 +41,7 @@ export function StaffPage() {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<CreateStaffInput>({
@@ -53,7 +49,7 @@ export function StaffPage() {
     defaultValues: { fullName: '', email: '', password: '', role: 'Staff' },
   })
 
-  const role = watch('role')
+  const role = useWatch({ control, name: 'role' })
 
   async function onSubmit(data: CreateStaffInput) {
     try {
@@ -62,7 +58,7 @@ export function StaffPage() {
       setOpen(false)
       reset()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to create staff')
+      toast.error(getErrorMessage(err, 'Failed to create staff'))
     }
   }
 
@@ -80,8 +76,8 @@ export function StaffPage() {
       ) : staff.length === 0 ? (
         <EmptyState icon={Users} title="No staff yet" description="Create the first staff login." />
       ) : (
-        <div className="bg-card overflow-hidden rounded-xl border">
-          <Table>
+        <div className="bg-card overflow-x-auto rounded-xl border">
+          <Table className="min-w-[560px]">
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -108,44 +104,44 @@ export function StaffPage() {
         </div>
       )}
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create staff account</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <FormFieldWrapper label="Full name" required error={errors.fullName}>
-              <Input {...register('fullName')} />
-            </FormFieldWrapper>
-            <FormFieldWrapper label="Email" required error={errors.email}>
-              <Input type="email" {...register('email')} />
-            </FormFieldWrapper>
-            <FormFieldWrapper label="Password" required error={errors.password}>
-              <Input type="password" {...register('password')} />
-            </FormFieldWrapper>
-            <FormFieldWrapper label="Role" required error={errors.role}>
-              <Select
-                value={role}
-                onValueChange={(value) =>
-                  setValue('role', (value as 'Admin' | 'Staff') ?? 'Staff')
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Staff">Staff</SelectItem>
-                  <SelectItem value="Admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
-            </FormFieldWrapper>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create account
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <FormDialog
+        open={open}
+        onOpenChange={setOpen}
+        title="Create staff account"
+        description="Create an Admin or Staff login for the shop."
+      >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <FormFieldWrapper label="Full name" required error={errors.fullName}>
+            <Input {...register('fullName')} />
+          </FormFieldWrapper>
+          <FormFieldWrapper label="Email" required error={errors.email}>
+            <Input type="email" {...register('email')} />
+          </FormFieldWrapper>
+          <FormFieldWrapper label="Password" required error={errors.password}>
+            <Input type="password" {...register('password')} />
+          </FormFieldWrapper>
+          <FormFieldWrapper label="Role" required error={errors.role}>
+            <Select
+              value={role}
+              onValueChange={(value) =>
+                setValue('role', (value as 'Admin' | 'Staff') ?? 'Staff')
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Staff">Staff</SelectItem>
+                <SelectItem value="Admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormFieldWrapper>
+          <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Create account
+          </Button>
+        </form>
+      </FormDialog>
     </div>
   )
 }
