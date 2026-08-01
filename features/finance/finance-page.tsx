@@ -108,9 +108,9 @@ export function FinancePage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatsCard title="Expense" value={totals.expense.toLocaleString('en-IN')} icon={Wallet} variant="warning" />
-        <StatsCard title="Income" value={totals.income.toLocaleString('en-IN')} icon={Wallet} variant="success" />
-        <StatsCard title="Savings" value={totals.savings.toLocaleString('en-IN')} icon={Wallet} variant="primary" />
+        <StatsCard className="interactive-card" title="Expense" value={totals.expense.toLocaleString('en-IN')} icon={Wallet} variant="warning" />
+        <StatsCard className="interactive-card" title="Income" value={totals.income.toLocaleString('en-IN')} icon={Wallet} variant="success" />
+        <StatsCard className="interactive-card" title="Savings" value={totals.savings.toLocaleString('en-IN')} icon={Wallet} variant="primary" />
       </div>
 
       {isLoading ? (

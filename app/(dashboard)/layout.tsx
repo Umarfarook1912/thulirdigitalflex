@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardNavbar />
         <DashboardMobileNav />
-        <main className="flex-1 p-4 md:p-8">{children}</main>
+        <main className="page-enter flex-1 p-4 md:p-8">{children}</main>
       </div>
     </div>
   )

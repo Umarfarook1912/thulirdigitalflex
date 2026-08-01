@@ -22,7 +22,7 @@ export function DashboardSidebar() {
   return (
     <aside className="bg-sidebar text-sidebar-foreground no-print flex w-64 shrink-0 flex-col border-r border-sidebar-border">
       <div className="flex items-center gap-3 border-b border-sidebar-border px-5 py-5">
-        <Image src={APP_LOGO} alt={BUSINESS_NAME} width={40} height={40} className="rounded-md" />
+        <Image src={APP_LOGO} alt={BUSINESS_NAME} width={40} height={40} className="object-contain" />
         <div className="min-w-0">
           <p className="font-heading truncate text-sm font-semibold text-white">THULIR</p>
           <p className="truncate text-xs text-white/50">Digital Flex</p>
@@ -41,10 +41,10 @@ export function DashboardSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition',
+                'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-200',
                 active
-                  ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                  : 'text-white/70 hover:bg-sidebar-accent/60 hover:text-white'
+                  ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm'
+                  : 'text-white/70 hover:translate-x-0.5 hover:bg-sidebar-accent/60 hover:text-white'
               )}
             >
               <Icon className="h-4 w-4" />

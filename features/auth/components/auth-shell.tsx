@@ -17,7 +17,7 @@ export function AuthShell({ title, description, children }: AuthShellProps) {
       </div>
 
       <Link href={ROUTES.home} className="relative mb-8 flex flex-col items-center gap-3">
-        <Image src={APP_LOGO} alt={BUSINESS_NAME} width={80} height={80} className="rounded-lg" />
+        <Image src={APP_LOGO} alt={BUSINESS_NAME} width={80} height={80} className="object-contain" />
         <span className="font-heading text-sm tracking-[0.2em] text-white uppercase">
           {BUSINESS_NAME}
         </span>
