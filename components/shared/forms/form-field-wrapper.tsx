@@ -12,6 +12,7 @@ interface FormFieldWrapperProps {
   required?: boolean
   hint?: string
   className?: string
+  labelClassName?: string
   children: ReactNode
 }
 
@@ -22,11 +23,12 @@ export function FormFieldWrapper({
   required,
   hint,
   className,
+  labelClassName,
   children,
 }: FormFieldWrapperProps) {
   return (
     <div className={cn('space-y-1.5', className)}>
-      <Label htmlFor={htmlFor} className="text-sm font-medium">
+      <Label htmlFor={htmlFor} className={cn('text-sm font-medium', labelClassName)}>
         {label}
         {required && <span className="text-destructive ml-0.5">*</span>}
       </Label>

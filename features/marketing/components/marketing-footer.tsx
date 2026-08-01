@@ -4,8 +4,8 @@ import { APP_LOGO, BUSINESS_ADDRESS, BUSINESS_NAME, BUSINESS_PHONES, ROUTES } fr
 
 export function MarketingFooter() {
   return (
-    <footer className="bg-brand-dark-foreground text-brand-dark border-t border-brand-dark/10 px-4 pt-12 pb-8 sm:px-6 sm:pt-14 lg:px-10">
-      <div className="mx-auto grid w-full max-w-[1600px] gap-10 md:grid-cols-[1.3fr_1fr_1fr]">
+    <footer className="border-t border-brand-dark/10 bg-brand-dark-foreground px-4 pt-14 pb-8 text-brand-dark sm:px-6 sm:pt-16 lg:px-10">
+      <div className="mx-auto grid w-full max-w-7xl gap-10 md:grid-cols-[1.3fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-3">
             <Image
@@ -62,7 +62,7 @@ export function MarketingFooter() {
         </div>
       </div>
 
-      <div className="text-brand-dark/45 mx-auto mt-12 flex w-full max-w-[1600px] flex-col gap-2 border-t border-brand-dark/10 pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto mt-12 flex w-full max-w-7xl flex-col gap-2 border-t border-brand-dark/10 pt-6 text-xs text-brand-dark/45 sm:flex-row sm:items-center sm:justify-between">
         <p>
           © {new Date().getFullYear()} {BUSINESS_NAME}. All rights reserved.
         </p>

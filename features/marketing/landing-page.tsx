@@ -1,5 +1,6 @@
 import { MarketingNav } from '@/features/marketing/components/marketing-nav'
 import { HeroSection } from '@/features/marketing/components/hero-section'
+import { CapabilitiesStrip } from '@/features/marketing/components/capabilities-strip'
 import { ServicesSection } from '@/features/marketing/components/services-section'
 import { ProcessSection } from '@/features/marketing/components/process-section'
 import { WhyThulirSection } from '@/features/marketing/components/why-thulir-section'
@@ -12,6 +13,7 @@ export function LandingPage() {
     <main>
       <MarketingNav />
       <HeroSection />
+      <CapabilitiesStrip />
       <ServicesSection />
       <ProcessSection />
       <WhyThulirSection />

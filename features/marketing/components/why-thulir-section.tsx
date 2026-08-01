@@ -2,45 +2,79 @@ import { Clock3, MapPin, Ruler, Sparkles } from 'lucide-react'
 import { Reveal } from '@/components/shared/layout/reveal'
 
 const BENEFITS = [
-  { title: 'Made to measure', description: 'Accurate sizing for each location and use.', icon: Ruler },
-  { title: 'Clean output', description: 'Sharp detail, strong colour, and careful finishing.', icon: Sparkles },
-  { title: 'Prompt service', description: 'Clear coordination from requirement to delivery.', icon: Clock3 },
-  { title: 'Local support', description: 'Easy access from our Dindigul print shop.', icon: MapPin },
+  {
+    title: 'Made to measure',
+    description: 'Accurate sizing for each location and use case, without guesswork.',
+    icon: Ruler,
+  },
+  {
+    title: 'Clean output',
+    description: 'Sharp detail, strong colour, and careful finishing on every job.',
+    icon: Sparkles,
+  },
+  {
+    title: 'Prompt service',
+    description: 'Clear coordination from requirement to delivery and install.',
+    icon: Clock3,
+  },
+  {
+    title: 'Local support',
+    description: 'Easy access and hands-on help from our Dindigul print shop.',
+    icon: MapPin,
+  },
 ]
 
 export function WhyThulirSection() {
   return (
-    <section id="why-thulir" className="bg-background px-4 py-16 sm:px-6 sm:py-24 lg:px-10">
-      <div className="mx-auto grid w-full max-w-7xl items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
-        <Reveal>
-          <div className="bg-brand-dark relative overflow-hidden rounded-3xl p-7 text-white sm:p-12">
-            <div className="bg-primary absolute -top-16 -right-16 size-48 rounded-full opacity-20 blur-3xl" />
-            <p className="text-primary text-xs font-bold tracking-[0.2em] uppercase">
-              Why Thulir
-            </p>
-            <h2 className="font-heading mt-4 text-3xl font-bold leading-tight sm:text-4xl">
-              Practical print solutions, made with attention.
-            </h2>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/70">
-              We focus on the details that matter: the right size, suitable material, readable
-              output, and a finish that presents your business well.
-            </p>
-            <div className="bg-primary mt-10 h-1 w-16" />
-          </div>
+    <section
+      id="why-thulir"
+      className="relative overflow-hidden bg-brand-dark px-4 py-20 text-white sm:px-6 sm:py-28 lg:px-10"
+    >
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        style={{
+          background: [
+            'radial-gradient(circle at 15% 20%, color-mix(in oklab, var(--brand-primary) 16%, transparent) 0%, transparent 55%)',
+            'radial-gradient(circle at 85% 80%, color-mix(in oklab, var(--brand-primary) 12%, transparent) 0%, transparent 55%)',
+          ].join(', '),
+        }}
+      />
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl">
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <p className="text-primary text-[11px] font-bold tracking-[0.28em] uppercase">
+            Why partner with us
+          </p>
+          <h2 className="font-heading mt-3 text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl">
+            Why choose Thulir Digital Flex
+          </h2>
+          <p className="mt-4 text-sm leading-relaxed text-white/65 sm:text-base">
+            Practical print solutions with attention to size, material, readability, and finish.
+          </p>
         </Reveal>
 
-        <div className="grid gap-7 sm:grid-cols-2">
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {BENEFITS.map((benefit, index) => {
             const Icon = benefit.icon
             return (
               <Reveal key={benefit.title} delay={index * 90}>
-                <div className="group">
-                  <Icon className="text-primary size-6 transition-transform duration-300 group-hover:scale-110" />
-                  <h3 className="font-heading mt-4 font-semibold">{benefit.title}</h3>
-                  <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+                <article className="glass-panel group relative flex h-full min-h-56 flex-col overflow-hidden rounded-3xl p-7 transition duration-300 hover:-translate-y-1.5 hover:border-primary/40">
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    style={{
+                      background:
+                        'radial-gradient(circle at 12% 12%, color-mix(in oklab, var(--brand-primary) 14%, transparent), transparent 65%)',
+                    }}
+                  />
+                  <div className="bg-primary/15 text-primary relative flex size-14 items-center justify-center rounded-2xl">
+                    <Icon className="size-6" />
+                  </div>
+                  <h3 className="relative mt-6 text-lg font-bold tracking-tight">{benefit.title}</h3>
+                  <p className="relative mt-2.5 text-sm leading-relaxed text-white/60">
                     {benefit.description}
                   </p>
-                </div>
+                </article>
               </Reveal>
             )
           })}
